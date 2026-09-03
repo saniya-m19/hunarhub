@@ -34,7 +34,8 @@ async function startServer() {
     app.listen(port, () => console.log(`HunarHub API listening on port ${port}`))
   } catch (error) {
     console.error('Server startup aborted because MongoDB is unavailable.')
-    process.exitCode = 1
+    console.error('Startup error details:', { name: error?.name || 'UnknownError', code: error?.code || 'UNKNOWN', message: String(error?.message || 'Unknown startup error').replace(/(mongodb(?:\+srv)?:\/\/)[^@\s]+@/gi, '$1[REDACTED]@') })
+      process.exitCode = 1
   }
 }
 
