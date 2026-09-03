@@ -1,0 +1,17 @@
+import { useState } from 'react'
+import { dashboardMutation } from '../../services/api'
+import { EmptyState } from './DashboardPrimitives'
+
+export default function ReviewManager({ requests, orders, reviews, reload }) {
+  const completed = [...requests.filter(item => item.status === 'completed').map(item => ({ id: item.entrepreneur?._id, name: item.entrepreneur?.businessName, source: 'service request' })), ...orders.filter(item => item.status === 'completed').map(item => ({ id: item.entrepreneur?._id, name: item.entrepreneur?.businessName, source: 'order' }))]
+  const reviewed = new Set(reviews.map(item => item.entrepreneur?._id))
+  const eligible = completed.filter(item => item.id && !reviewed.has(item.id)).filter((item, index, list) => list.findIndex(candidate => candidate.id === item.id) === index)
+  return <div><h3 className="mb-3 text-lg font-bold text-stone-900">My reviews</h3><div className="grid gap-4">{reviews.map(review => <div key={review._id} className="rounded-xl border border-orange-100 bg-white p-4"><strong>{review.entrepreneur?.businessName || 'Entrepreneur'}</strong><span className="ml-3 text-amber-600">{review.rating}/5</span><p className="mt-2 text-sm text-stone-500">{review.comment || 'No comment'}</p></div>)}{eligible.map(item => <ReviewForm key={item.id} item={item} reload={reload} />)}{!reviews.length && !eligible.length && <EmptyState title="Complete a service or order to leave a review." />}</div></div>
+}
+
+function ReviewForm({ item, reload }) {
+  const [rating, setRating] = useState('5'); const [comment, setComment] = useState(''); const [error, setError] = useState(''); const [saving, setSaving] = useState(false); const [done, setDone] = useState(false)
+  const submit = async event => { event.preventDefault(); setError(''); if (!comment.trim()) return setError('Please add a comment.'); setSaving(true); try { await dashboardMutation(`/customer/entrepreneurs/${item.id}/reviews`, 'POST', { rating: Number(rating), comment: comment.trim() }); setDone(true); reload() } catch (requestError) { setError(requestError.message) } finally { setSaving(false) } }
+  if (done) return <p className="rounded-xl bg-green-50 p-4 text-sm text-green-700">Review submitted successfully.</p>
+  return <form onSubmit={submit} className="rounded-xl border border-orange-100 bg-white p-4"><p className="font-bold">Review {item.name || 'this entrepreneur'} <span className="font-normal text-stone-500">after your {item.source}</span></p><div className="mt-3 flex gap-3"><select value={rating} onChange={event => setRating(event.target.value)} className="rounded-lg border border-stone-200 px-3 py-2"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select><input required value={comment} onChange={event => setComment(event.target.value)} placeholder="Your comment" className="min-w-0 flex-1 rounded-lg border border-stone-200 px-3 py-2" /></div>{error && <p className="mt-2 text-sm text-red-600">{error}</p>}<button disabled={saving} className="mt-3 rounded-full bg-orange-500 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">{saving ? 'Submitting...' : 'Submit review'}</button></form>
+}

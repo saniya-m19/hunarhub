@@ -1,0 +1,13 @@
+const express = require('express')
+const { register, login, me, updateMe, logout, protectedTest, entrepreneurTest, adminTest } = require('../controllers/authController')
+const { protect, authorize } = require('../middleware/authMiddleware')
+const router = express.Router()
+router.post('/register', register)
+router.post('/login', login)
+router.get('/me', protect, me)
+router.put('/me', protect, updateMe)
+router.post('/logout', protect, logout)
+router.get('/test/protected', protect, protectedTest)
+router.get('/test/entrepreneur', protect, authorize('entrepreneur', 'admin'), entrepreneurTest)
+router.get('/test/admin', protect, authorize('admin'), adminTest)
+module.exports = router

@@ -1,0 +1,3 @@
+import { FiShoppingBag, FiScissors, FiFeather, FiPenTool, FiMapPin } from 'react-icons/fi'
+const icons = { shoe: FiShoppingBag, pot: FiFeather, needle: FiScissors, palette: FiPenTool, store: FiMapPin }
+export default function CategoryCard({ category }) { const Icon = icons[category.icon] || FiShoppingBag; return <div className="group rounded-2xl border border-orange-100 bg-white p-5 shadow-sm hover:-translate-y-1 hover:shadow-lg hover:shadow-orange-100"><div className="mb-6 grid h-12 w-12 place-items-center rounded-xl bg-orange-50 text-2xl text-orange-600 group-hover:bg-orange-500 group-hover:text-white"><Icon /></div><h3 className="font-bold text-stone-900">{category.name}</h3><p className="mt-1 text-sm leading-6 text-stone-500">{category.description}</p></div> }

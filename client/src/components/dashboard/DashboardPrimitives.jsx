@@ -1,0 +1,4 @@
+export function StatCard({ label, value }) { return <div className="rounded-2xl border border-orange-100 bg-white p-5 shadow-sm"><p className="text-sm font-semibold text-stone-500">{label}</p><p className="mt-2 text-3xl font-bold text-stone-900">{value ?? 0}</p></div> }
+export function EmptyState({ title, action }) { return <div className="rounded-2xl border border-dashed border-orange-200 bg-white p-10 text-center"><p className="font-bold text-stone-800">{title}</p>{action}</div> }
+export function LoadingState() { return <div className="py-16 text-center font-semibold text-orange-600">Loading your workspace...</div> }
+export function ErrorState({ message }) { return <div className="rounded-xl bg-red-50 p-4 text-sm font-semibold text-red-700">{message}</div> }
