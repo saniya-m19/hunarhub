@@ -30,7 +30,7 @@ app.use(errorMiddleware)
 
 async function startServer() {
   try {
-    console.log('Startup environment:', { hasJwtSecret: Boolean(process.env.JWT_SECRET), hasMongoUri: Boolean(process.env.MONGODB_URI), nodeEnv: process.env.NODE_ENV || 'undefined', port: process.env.PORT || 'undefined' })
+    console.log('Startup environment:', { hasJwtSecret: Boolean(process.env.JWT_SECRET), jwtSecretIsPlaceholder: process.env.JWT_SECRET === 'replace_with_a_long_random_secret', hasMongoUri: Boolean(process.env.MONGODB_URI), nodeEnv: process.env.NODE_ENV || 'undefined', port: process.env.PORT || 'undefined' })
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'replace_with_a_long_random_secret') throw new Error('JWT_SECRET is not configured.')
     await connectDB()
     app.listen(port, () => console.log(`HunarHub API listening on port ${port}`))
