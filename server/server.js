@@ -1,4 +1,5 @@
-require('dotenv').config()
+const path = require('path')
+require('dotenv').config({ path: path.join(__dirname, '.env'), override: false })
 const express = require('express')
 const cors = require('cors')
 const connectDB = require('./config/db')
@@ -29,13 +30,14 @@ app.use(errorMiddleware)
 
 async function startServer() {
   try {
+    console.log('Startup environment:', { hasJwtSecret: Boolean(process.env.JWT_SECRET), hasMongoUri: Boolean(process.env.MONGODB_URI), nodeEnv: process.env.NODE_ENV || 'undefined', port: process.env.PORT || 'undefined' })
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'replace_with_a_long_random_secret') throw new Error('JWT_SECRET is not configured.')
     await connectDB()
     app.listen(port, () => console.log(`HunarHub API listening on port ${port}`))
   } catch (error) {
-    console.error('Server startup aborted because MongoDB is unavailable.')
+    console.error('Server startup aborted.')
     console.error('Startup error details:', { name: error?.name || 'UnknownError', code: error?.code || 'UNKNOWN', message: String(error?.message || 'Unknown startup error').replace(/(mongodb(?:\+srv)?:\/\/)[^@\s]+@/gi, '$1[REDACTED]@') })
-      process.exitCode = 1
+    process.exitCode = 1
   }
 }
 
